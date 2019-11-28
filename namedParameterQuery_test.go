@@ -110,7 +110,7 @@ func TestQueryParsing(test *testing.T) {
 	// Run each test.
 	for _, parsingTest := range queryParsingTests {
 
-		query = NewNamedParameterQuery(parsingTest.Input)
+		query = NewNamedParameterQuery(parsingTest.Input, "?")
 
 		// test query texts
 		if(query.GetParsedQuery() != parsingTest.Expected) {
@@ -253,7 +253,7 @@ func TestParameterReplacement(test *testing.T) {
 
 		// parse query and set values.
 		parameterMap = make(map[string]interface{}, 8)
-		query = NewNamedParameterQuery(variableTest.Query)
+		query = NewNamedParameterQuery(variableTest.Query, "?")
 
 		for _, queryVariable := range variableTest.Parameters {
 			query.SetValue(queryVariable.Name, queryVariable.Value)
@@ -269,7 +269,7 @@ func TestParameterReplacement(test *testing.T) {
 			}
 		}
 
-		query = NewNamedParameterQuery(variableTest.Query)
+		query = NewNamedParameterQuery(variableTest.Query, "?")
 		query.SetValuesFromMap(parameterMap)
 
 		// test map parameter outputs.
@@ -308,7 +308,7 @@ func TestStructParameters(test *testing.T) {
 	singleParam.notExported = -1
 
 	//
-	query = NewNamedParameterQuery("SELECT * FROM table WHERE col1 = :Foo AND col2 = :Bar AND col3 = :Baz")
+	query = NewNamedParameterQuery("SELECT * FROM table WHERE col1 = :Foo AND col2 = :Bar AND col3 = :Baz", "?")
 	query.SetValuesFromStruct(singleParam)
 
 	verifyStructParameters("MultipleStructReplacement", test, query, []interface{} {
@@ -318,7 +318,7 @@ func TestStructParameters(test *testing.T) {
 	})
 
 	//
-	query = NewNamedParameterQuery("SELECT * FROM table WHERE col1 = :Foo AND col2 = :Bar AND col3 = :Foo AND col4 = :Foo AND col5 = :Baz")
+	query = NewNamedParameterQuery("SELECT * FROM table WHERE col1 = :Foo AND col2 = :Bar AND col3 = :Foo AND col4 = :Foo AND col5 = :Baz", "?")
 	query.SetValuesFromStruct(singleParam)
 
 	verifyStructParameters("RecurringStructParameterReplacement", test, query, []interface{} {
@@ -330,7 +330,7 @@ func TestStructParameters(test *testing.T) {
 	})
 
 	//
-	query = NewNamedParameterQuery("SELECT * FROM table WHERE col1 = :unexported AND col2 = :notExported AND col3 = :Foo")
+	query = NewNamedParameterQuery("SELECT * FROM table WHERE col1 = :unexported AND col2 = :notExported AND col3 = :Foo", "?")
 	query.SetValuesFromStruct(singleParam)
 
 	verifyStructParameters("UnexportedStructReplacement", test, query, []interface{} {

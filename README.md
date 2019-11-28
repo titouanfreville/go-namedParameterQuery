@@ -4,6 +4,7 @@ NamedParameterQuery
 [![Build Status](https://travis-ci.org/Knetic/go-namedParameterQuery.svg?branch=master)](https://travis-ci.org/Knetic/go-namedParameterQuery)
 [![Godoc](https://godoc.org/github.com/Knetic/go-namedParameterQuery?status.png)](https://godoc.org/github.com/Knetic/go-namedParameterQuery)
 
+*This fork add support for :arg and $n arg substitution for sql/database package*
 
 Provides support for named parameters in SQL queries used by Go / golang programs and libraries.
 
@@ -74,7 +75,7 @@ But here are some quick examples of the main use cases.
 		SELECT * FROM table
 		WHERE col1 = :foo
 		AND col2 IN(:firstName, :middleName, :lastName)
-	")
+	", "?")
 
 	query.SetValue("foo", "bar")
 	query.SetValue("firstName", "Alice")
@@ -85,7 +86,7 @@ But here are some quick examples of the main use cases.
 	connection.QueryRow(query.GetParsedQuery(), (query.GetParsedParameters())...)
 
 It doesn't matter what order you specify the parameters, or how many times they appear in the query,
-they're replaced as expected.
+they're replaced as expected. The second argument is to tell witch syntax is expected for this query (in `?`, `$`, `:`)
 
 That looks a little tedious, and feels a lot like JDBC, where each parameter is given one line.
 But you can also add groups of parameters with a map:
@@ -94,7 +95,7 @@ But you can also add groups of parameters with a map:
 		SELECT * FROM table
 		WHERE col1 = :foo
 		AND col2 IN(:firstName, :middleName, :lastName)
-	")
+	", "?")
 
 	var parameterMap = map[string]interface{} {
 		"foo": 		"bar",
